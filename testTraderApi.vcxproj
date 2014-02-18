@@ -25,7 +25,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -115,6 +115,7 @@
     <ClInclude Include="Defines.h" />
     <ClInclude Include="LogDisplayer.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StlUtil.h" />
     <ClInclude Include="TraderSpi.h" />

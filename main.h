@@ -23,7 +23,7 @@ class LogDisplayer;
 
 class AutoTraderApp: public wxApp
 {
-    public:    
+    public:
         AutoTraderApp();
         virtual ~AutoTraderApp();
         virtual bool OnInit();
@@ -33,28 +33,28 @@ class AutoTraderApp: public wxApp
 
 class FrameMain: public wxFrame
 {
-    public:   
+    public:
         FrameMain(const wxString& title, const wxPoint& pos, const wxSize& size);
-    private:   
-        void OnHello(wxCommandEvent& event);    
-        void OnExit(wxCommandEvent& event);   
-        void OnAbout(wxCommandEvent& event);   
+    private:
+        void OnHello(wxCommandEvent& event);
+        void OnExit(wxCommandEvent& event);
+        void OnAbout(wxCommandEvent& event);
         void OnButtonLoginClick(wxCommandEvent& event);
-		void OnButtonOrderInsertClick(wxCommandEvent& event);
-		void OnTimer1Trigger(wxTimerEvent& event);
-		void OnCheckBoxPriceTypeClick(wxCommandEvent& event);
-		void OnComboBoxInstrumentSelected(wxCommandEvent& event);
-		void OnButtonOrderContinueClick(wxCommandEvent& event);
-		void OnButtonQryPositionClick(wxCommandEvent& event);
-		void OnButtonReqQryAccountClick(wxCommandEvent& event);
-		void OnButtonQryBanksClick(wxCommandEvent& event);
-		void OnButtonQryFutureClick(wxCommandEvent& event);
-		void OnButtonQryBankClick(wxCommandEvent& event);
-		void OnButtonFuture2BankClick(wxCommandEvent& event);
-		void OnButtonBank2FutureClick(wxCommandEvent& event);
-		void OnClose(wxCloseEvent& event);
-		void OnButtonOrderActionClick(wxCommandEvent& event);
-		void OnButtonQryDetailClick(wxCommandEvent& event);
+        void OnButtonOrderInsertClick(wxCommandEvent& event);
+        void OnTimer1Trigger(wxTimerEvent& event);
+        void OnCheckBoxPriceTypeClick(wxCommandEvent& event);
+        void OnComboBoxInstrumentSelected(wxCommandEvent& event);
+        void OnButtonOrderContinueClick(wxCommandEvent& event);
+        void OnButtonQryPositionClick(wxCommandEvent& event);
+        void OnButtonReqQryAccountClick(wxCommandEvent& event);
+        void OnButtonQryBanksClick(wxCommandEvent& event);
+        void OnButtonQryFutureClick(wxCommandEvent& event);
+        void OnButtonQryBankClick(wxCommandEvent& event);
+        void OnButtonFuture2BankClick(wxCommandEvent& event);
+        void OnButtonBank2FutureClick(wxCommandEvent& event);
+        void OnClose(wxCloseEvent& event);
+        void OnButtonOrderActionClick(wxCommandEvent& event);
+        void OnButtonQryDetailClick(wxCommandEvent& event);
 
         void OnOrderTimer(wxTimerEvent& event);
         void OnFeaturesTradingMsg(wxCommandEvent&);
@@ -70,25 +70,25 @@ class FrameMain: public wxFrame
         wxTextCtrl* TextCtrlPassWord_;
         wxTextCtrl* TextCtrlOther_;
         wxTextCtrl* TextCtrlBroker_;
-		wxTextCtrl* TextCtrlBankPwd_;
-		wxTextCtrl* TextCtrlAccountPwd_;
+        wxTextCtrl* TextCtrlBankPwd_;
+        wxTextCtrl* TextCtrlAccountPwd_;
 
         wxChoice* ChoiceFront_;
-		wxChoice* ChoiceDirector_;
-		wxChoice* ChoiceBrokerSeq_;
-		wxChoice* ChoiceOffset_;
-		wxChoice* ChoiceBanks_;
+        wxChoice* ChoiceDirector_;
+        wxChoice* ChoiceBrokerSeq_;
+        wxChoice* ChoiceOffset_;
+        wxChoice* ChoiceBanks_;
 
-		wxSpinCtrl* SpinCtrlSeconds_;
-		wxSpinCtrl* SpinCtrlPrice_;
-		wxSpinCtrl* SpinCtrlMoney_;
-		wxSpinCtrl* SpinCtrlTicks_;
-		wxSpinCtrl* SpinCtrlVolume_;
+        wxSpinCtrl* SpinCtrlSeconds_;
+        wxSpinCtrl* SpinCtrlPrice_;
+        wxSpinCtrl* SpinCtrlMoney_;
+        wxSpinCtrl* SpinCtrlTicks_;
+        wxSpinCtrl* SpinCtrlVolume_;
 
-		wxCheckBox* CheckBoxPriceType_;
-		wxStatusBar* StatusBar1_;
+        wxCheckBox* CheckBoxPriceType_;
+        wxStatusBar* StatusBar1_;
         wxTimer continueOrderTimer_;
-		wxComboBox* ComboBoxInstrument_;
+        wxComboBox* ComboBoxInstrument_;
 
         LogDisplayer* msgDisplayer_;
 

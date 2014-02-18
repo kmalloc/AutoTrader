@@ -519,7 +519,7 @@ void CTraderSpi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
     if (bIsLast)
     {
         wxString format = _T("%s  %s  %s  %d  %f  %f\n");
-        wxString msg = _T("\n合约  买卖  今昨  持仓  成本  持仓盈亏\n");
+        wxString msg = _T("\n持仓：\n合约  买卖  今昨  持仓  成本  持仓盈亏\n");
         map<string, CThostFtdcInvestorPositionField>::iterator it = positionData_.begin();
 
         while (it != positionData_.end())
@@ -553,7 +553,7 @@ void CTraderSpi::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetail
     {
         positionData_.clear();
         wxString format = _T("%s  %s  %s  %s  %d  %f  %f\n");
-        wxString msg = _T("\n成交编号  合约  买卖  今昨  数量  开仓价  持仓盈亏\n");
+        wxString msg = _T("\n持仓明细:\n成交编号  合约  买卖  今昨  数量  开仓价  持仓盈亏\n");
         map<int, CThostFtdcInvestorPositionDetailField>::iterator it = positionDetailData_.begin();
 
         while (it != positionDetailData_.end())
