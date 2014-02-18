@@ -26,7 +26,6 @@ public:
     explicit CTraderSpi(wxEvtHandler* handler = NULL);
     virtual ~CTraderSpi();
 
-    CThostFtdcInstrumentField GetInstrumentByLabel(const std::string& label) const;
 
     void SetInvestorInfo(const char* investor, const char* pwd);
     	///ÓÃ»§µÇÂ¼ÇëÇó
@@ -106,6 +105,7 @@ private:
     virtual void OnRtnTrade(CThostFtdcTradeField *pTrade);
         
     CThostFtdcInstrumentField GetInstrumentById(const std::string& id) const;
+    CThostFtdcInstrumentField GetInstrumentByLabel(const std::string& label) const;
 
 private:
 
@@ -134,6 +134,9 @@ private:
 
     CThostFtdcTraderApi* pTraderApi_;
 
+
+    // all the following data are accessed from separated thread
+    // don't access them from GUI thread.
     std::map<int, CThostFtdcInvestorPositionDetailField> positionDetailData_;
     std::map<std::string, CThostFtdcInstrumentField> instrumentData_;
     std::map<std::string, OrderEntity> orderSend_;

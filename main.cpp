@@ -11,7 +11,6 @@
 #include "ConfigReader.h"
 
 #include "LogDisplayer.h"
-#include ".\ThostTraderApi\ThostFtdcTraderApi.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -177,9 +176,9 @@ FrameMain::FrameMain(const wxString& title, const wxPoint& pos, const wxSize& si
 
     wxBoxSizer* top2_sizer2 = new wxBoxSizer(wxHORIZONTAL);
     wxStaticText* instru_static = new wxStaticText(OrderSettingPanel_, wxID_ANY, _("合约"));
-    ComboBoxInstrument_ = new wxComboBox(OrderSettingPanel_, wxID_ANY, wxEmptyString, wxPoint(8,8), wxSize(162,22), 0, 0, wxCB_SORT, wxDefaultValidator, _T("ID_COMBOBOX1"));
+    ComboBoxInstrument_ = new wxComboBox(OrderSettingPanel_, wxID_ANY, wxEmptyString, wxPoint(8,8), wxSize(162,22), 0, 0, wxCB_SORT | wxCB_READONLY, wxDefaultValidator, _T("ID_COMBOBOX1"));
     wxStaticText* instru_price_static = new wxStaticText(OrderSettingPanel_, wxID_ANY, _("价格"));
-    SpinCtrlPrice_ = new wxSpinCtrl(OrderSettingPanel_, wxID_ANY, _T("0"), wxPoint(128,8), wxSize(88,22), 0, 0, 10000, 0, _T("ID_SPINCTRL1"));
+    SpinCtrlPrice_ = new wxSpinCtrl(OrderSettingPanel_, wxID_ANY, _T("0"), wxPoint(128,8), wxSize(88,22), 0, 0, 10000000, 0, _T("ID_SPINCTRL1"));
     SpinCtrlPrice_->SetValue(_T("0"));
     top2_sizer2->Add(instru_static, 0, wxEXPAND | wxALL, 4);
     top2_sizer2->Add(ComboBoxInstrument_, 2, wxEXPAND | wxALL, 4);
@@ -201,7 +200,7 @@ FrameMain::FrameMain(const wxString& title, const wxPoint& pos, const wxSize& si
     ChoiceOffset_->Append(_("平今"));
     top2_sizer2->Add(ChoiceOffset_, 0, wxEXPAND | wxALL, 4);
 
-    SpinCtrlVolume_ = new wxSpinCtrl(OrderSettingPanel_, wxID_ANY, _T("1"), wxPoint(416,8), wxSize(72,22), 0, 1, 1000, 1, _T("ID_SPINCTRL2"));
+    SpinCtrlVolume_ = new wxSpinCtrl(OrderSettingPanel_, wxID_ANY, _T("1"), wxPoint(416,8), wxSize(72,22), 0, 1, 10000, 1, _T("ID_SPINCTRL2"));
     SpinCtrlVolume_->SetValue(_T("1"));
     top2_sizer2->Add(SpinCtrlVolume_, 0, wxEXPAND | wxALL, 4);
 
@@ -384,6 +383,20 @@ void FrameMain::OnButtonBank2FutureClick(wxCommandEvent& event)
                         SpinCtrlMoney_->GetValue(), false);
 }
 
+static string ExtractInstrument(const string& str)
+{
+    vector<string> out;
+    StlUtil::Split(str, ',', out);
+    if (out.empty()) return "";
+
+    string instrument = out[0];
+    out.clear();
+    StlUtil::Split(instrument, ':', out);
+    if (out.empty()) return "";
+    else if (out.size() == 1) return out[0];
+    else return out[1];   
+}
+
 //下单
 void FrameMain::OnButtonOrderInsertClick(wxCommandEvent& event)
 {
@@ -391,17 +404,10 @@ void FrameMain::OnButtonOrderInsertClick(wxCommandEvent& event)
 
     if(offset == 2)	offset = 3;//平今3
 
-    string instrument = string(ComboBoxInstrument_->GetValue().c_str());
-    vector<string> out;
-    StlUtil::Split(instrument, ',', out);
-    if (out.empty()) return;
+    string instrument = ExtractInstrument(string(ComboBoxInstrument_->GetValue().c_str()));
+    if (instrument.empty()) return;
 
-    instrument = out[0];
-    out.clear();
-    StlUtil::Split(instrument, ':', out);
-    if (out.empty()) return;
-
-    trader_.ReqOrderInsert(out[1].c_str(), SpinCtrlPrice_->GetValue(),
+    trader_.ReqOrderInsert(instrument.c_str(), SpinCtrlPrice_->GetValue(),
                    ChoiceDirector_->GetCurrentSelection(), offset, SpinCtrlVolume_->GetValue());
 }
 
@@ -412,7 +418,7 @@ void FrameMain::PushContinuousOrder()
     static int ticks = 0,sec = 0;
     static int offset = 0;
     static int director = -1, volume = -1;
-    static wxString instrument;
+    static string instrument;
     static double price = -1;
 
     if (index == -1)
@@ -423,7 +429,9 @@ void FrameMain::PushContinuousOrder()
 
         ticks = SpinCtrlTicks_->GetValue();
         sec   = SpinCtrlSeconds_->GetValue();
-        instrument = ComboBoxInstrument_->GetValue();
+        instrument = ExtractInstrument(string(ComboBoxInstrument_->GetValue().c_str()));
+        if (instrument.empty()) return;
+
         price = SpinCtrlPrice_->GetValue();
         director = ChoiceDirector_->GetCurrentSelection();
         volume = SpinCtrlVolume_->GetValue();
@@ -441,7 +449,7 @@ void FrameMain::PushContinuousOrder()
     else
     {
         index++;
-        trader_.ReqOrderInsert(instrument, price, director, offset, volume);
+        trader_.ReqOrderInsert(instrument.c_str(), price, director, offset, volume);
     }
 }
 
@@ -481,8 +489,8 @@ void FrameMain::OnButtonOrderActionClick(wxCommandEvent& event)
 //选择合约：修改最大允许下单
 void FrameMain::OnComboBoxInstrumentSelected(wxCommandEvent& event)
 {
-    CThostFtdcInstrumentField f = trader_.GetInstrumentByLabel(string(ComboBoxInstrument_->GetValue().c_str()));
-    SpinCtrlVolume_->SetMax(f.MaxLimitOrderVolume);
+    // CThostFtdcInstrumentField f = trader_.GetInstrumentByLabel(string(ComboBoxInstrument_->GetValue().c_str()));
+    // SpinCtrlVolume_->SetMax(f.MaxLimitOrderVolume);
 }
 
 void FrameMain::ShowOrderStatus(const wxString& msg)
@@ -511,7 +519,8 @@ void FrameMain::OnFeaturesTradingMsg(wxCommandEvent& event)
     {
         case MAIN_WIN_MSG_INSTRUMENT:
             {
-                ComboBoxInstrument_->Append(msg);
+                if (ComboBoxInstrument_->FindString(msg, true) == wxNOT_FOUND)
+                    ComboBoxInstrument_->Append(msg);
             }
             break;
         case MAIN_WIN_MSG_ORDER:

@@ -530,7 +530,7 @@ void CTraderSpi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
                     (f.PosiDirection == THOST_FTDC_PD_Long? _T("多") : _T("空")),
                     (f.PositionDate == THOST_FTDC_PSD_History? _T("昨仓") : _T("今仓")),
                     f.Position,
-                    (f.PositionCost),// / instrumentData_[pInvestorPosition->InstrumentID].VolumeMultiple
+                    f.PositionCost?(f.PositionCost / (f.Position * instrumentData_[pInvestorPosition->InstrumentID].VolumeMultiple)):0,
                     f.PositionProfit);
 
             msg += str;
@@ -635,7 +635,7 @@ void CTraderSpi::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetail
             wxString str = wxString::Format(format,
                        f.InstrumentID, (f.PosiDirection == THOST_FTDC_PD_Long?"多":"空"),
                        (f.PositionDate == THOST_FTDC_PSD_History?"昨仓":"今仓"), f.Position,
-                       (f.PositionCost / f.Position), // / instrumentData_[f.InstrumentID].VolumeMultiple),
+                       f.PositionCost? (f.PositionCost / f.Position / instrumentData_[f.InstrumentID].VolumeMultiple):0,
                        f.PositionProfit);
 
             msg += str;
@@ -694,7 +694,8 @@ void CTraderSpi::OnRtnOrder(CThostFtdcOrderField *pOrder)
 ///成交通知
 void CTraderSpi::OnRtnTrade(CThostFtdcTradeField *pTrade)
 {
-    DisplayMsg(wxString::Format("成交编号:%s, broker编号%d, 成交时间%s", pTrade->TradeID, pTrade->BrokerOrderSeq, pTrade->TradeTime));
+    DisplayMsg(wxString::Format("有新成交!成交合约:%s, 成交编号:%s, broker编号%d, 成交时间%s, 价格:%f, 数量:%d",pTrade->InstrumentID, pTrade->TradeID,
+        pTrade->BrokerOrderSeq, pTrade->TradeTime, pTrade->Price, pTrade->Volume));
 }
 
 void CTraderSpi::OnRspQryAccountregister(CThostFtdcAccountregisterField* pAccountregister,
