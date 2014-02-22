@@ -2,8 +2,8 @@
 #include <stdio.h>
 using namespace std;
 
-#include ".\ThostTraderApi\ThostFtdcTraderApi.h"
-#include ".\ThostTraderApi\ThostFtdcUserApiDataType.h"
+#include ".\ThostApi\ThostFtdcTraderApi.h"
+#include ".\ThostApi\ThostFtdcUserApiDataType.h"
 
 #include "Defines.h"
 #include "TraderSpi.h"
@@ -233,6 +233,13 @@ void CTraderSpi::ReqQryInvestorPositionDetail()
     strcpy(f.BrokerID, broker_.c_str());
     strcpy(f.InvestorID, investor_.c_str());
     pTraderApi_->ReqQryInvestorPositionDetail(&f, ++reqID_);
+}
+
+void CTraderSpi::ReqQryDepthMarketData()
+{
+	CThostFtdcQryDepthMarketDataField f;
+	memset(&f, 0, sizeof(f));
+	pTraderApi_->ReqQryDepthMarketData(&f, ++reqID_);
 }
 
 //查资金
@@ -472,6 +479,9 @@ void CTraderSpi::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CTho
 		///请求查询合约
         // wxThread::Sleep(1000);// CTP requires one query per second.
 		// ReqQryTradingAccount();
+
+		wxThread::Sleep(1000);
+		ReqQryDepthMarketData();
 	}
 }
 
@@ -644,6 +654,17 @@ void CTraderSpi::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetail
 
         DisplayMsg(msg);
     }
+}
+
+void CTraderSpi::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (pDepthMarketData)
+	{
+	    wxString msg = wxString::Format("合约行情：\n合约编号:%s,交易所:%s,最新价:%f,昨收盘价:%f,今开盘价:%f, 数量:%d",
+		    pDepthMarketData->InstrumentID, pDepthMarketData->ExchangeID, pDepthMarketData->LastPrice,
+		    pDepthMarketData->PreClosePrice,pDepthMarketData->OpenPrice,pDepthMarketData->Volume);
+		DisplayMsg(msg);
+	}
 }
 
 void CTraderSpi::OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)

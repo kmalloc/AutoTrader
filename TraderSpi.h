@@ -1,12 +1,11 @@
 #pragma once
 #include "Defines.h"
-#include ".\ThostTraderApi\ThostFtdcTraderApi.h"
+#include ".\ThostApi\ThostFtdcTraderApi.h"
 
 #include <time.h>
 #include <map>
 #include <queue>
 #include <wx/string.h>
-
 #include <wx/event.h>
 
 class wxLog;
@@ -32,6 +31,8 @@ public:
     void ReqUserLogin(const char*, const char*);
 
     void ReqUserConnect(const char* front, const char* broker);
+
+	void ReqQryDepthMarketData();
 
 	///投资者结算结果确认
     void ReqSettlementInfoConfirm();
@@ -103,7 +104,9 @@ private:
 
     ///成交通知
     virtual void OnRtnTrade(CThostFtdcTradeField *pTrade);
-        
+    ///请求查询行情响应
+	virtual void OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+  
     CThostFtdcInstrumentField GetInstrumentById(const std::string& id) const;
     CThostFtdcInstrumentField GetInstrumentByLabel(const std::string& label) const;
 
